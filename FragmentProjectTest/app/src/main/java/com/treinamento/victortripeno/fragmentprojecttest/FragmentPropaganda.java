@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by victor.tripeno on 13/02/2017.
  */
@@ -32,13 +34,13 @@ public class FragmentPropaganda extends Fragment {
 
         final Runnable r = new Runnable() {
             public void run() {
-                mudarString(view);
-                handler.postDelayed(this, 1*60*1000);
+                mudarString(view, retornoStringsValue());
+                handler.postDelayed(this, 1*5*1000);
                 contador++;
             }
         };
 
-        handler.postDelayed(r, 1*60*1000);
+        handler.postDelayed(r, 1*5*1000);
 
 
         buttonCliqueAqui.setOnClickListener(new View.OnClickListener() {
@@ -58,10 +60,42 @@ public class FragmentPropaganda extends Fragment {
         startActivity(intent);
     }
 
-    private void mudarString(View view) {
+    private void mudarString(View view, String name) {
+        /*for(Field stringSimples : listaStrings) {
+            Log.d("Strings ", R.string.class.getField(stringSimples.getName()).);
+
+        }*/
+
         final TextView propaganda = (TextView) view.findViewById(R.id.propaganda);
-        propaganda.setText("Bla " + contador);
-        Log.d("Chamou método mudar", "Chamou método mudar");
+        propaganda.setText(name);
+        //Log.d("Chamou método mudar", "Chamou método mudar");
+    }
+
+    public String retornoStringsValue() {
+        Field[] listaStrings = R.string.class.getDeclaredFields();
+
+        String[] allDrawablesNames = new String[listaStrings.length];
+
+        String name = "";
+
+        if(listaStrings.length == contador) {
+            contador = 0;
+        }
+
+        for(int i = 0; i < listaStrings.length; i++) {
+            int id = getResources().getIdentifier(listaStrings[contador].getName(), "string", getContext().getPackageName());
+            if (id != 0) {
+                //Log.d("Strings ", allDrawablesNames[contador]);
+                name = getResources().getString(id);
+                Log.d("Values ", name);
+                contador++;
+                break;
+            } else {
+                contador++;
+            }
+
+        }
+        return name;
     }
 
 }
